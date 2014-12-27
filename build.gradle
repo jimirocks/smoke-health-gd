@@ -39,16 +39,19 @@ task smokeHealthGD(type: JavaExec, dependsOn: compileGroovy) {
 }
 
 task downloadExots {
+    println 'downloading exotic libs:'
     ['https://developer.gooddata.com/downloads/dss/ads-driver.zip',
      'http://download.splunk.com/misc/sdk/java/splunk-sdk-java-1.3.1.jar']
             .each {
         def file = new FileOutputStream(exotLibs +  '/' + it.tokenize("/")[-1])
+        print "... $file"
         def out = new BufferedOutputStream(file)
         out << new URL(it).openStream()
         out.close()
+        println ' ... DONE'
     }
 
-    // unzip ads driver
+    print 'Unzipping ADS driver ... '
     def adsDriver = new File("$exotLibs/ads-driver.zip")
     def zip = new ZipFile(adsDriver)
     zip.entries().each {
@@ -56,6 +59,7 @@ task downloadExots {
     }
     zip.close()
     adsDriver.delete()
+    println 'DONE'
 }
 
 task wrapper(type: Wrapper) {
