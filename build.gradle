@@ -43,8 +43,9 @@ task downloadExots {
     ['https://developer.gooddata.com/downloads/dss/ads-driver.zip',
      'http://download.splunk.com/misc/sdk/java/splunk-sdk-java-1.3.1.jar']
             .each {
-        def file = new FileOutputStream(exotLibs +  '/' + it.tokenize("/")[-1])
-        print "... $file"
+        def library = exotLibs + '/' + it.tokenize("/")[-1]
+        def file = new FileOutputStream(library)
+        print "... $library"
         def out = new BufferedOutputStream(file)
         out << new URL(it).openStream()
         out.close()

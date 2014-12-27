@@ -11,6 +11,7 @@ class SplunkConnector {
     String password
 
     def export(String from, String to, String query, Closure<Event> eventClosure) {
+        println "Splunk export from $from to $to"
         // Create a map of arguments and add login parameters
         ServiceArgs loginArgs = new ServiceArgs();
         loginArgs.setUsername(user);
