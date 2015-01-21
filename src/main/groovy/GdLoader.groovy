@@ -17,7 +17,7 @@ class GdLoader {
     String project
 
     private Sql sql
-    private ScriptEngine pyEngine
+    ScriptEngine pyEngine
     private Date lastSuiteDate
 
     private CSVPrinter suitesCsv
@@ -60,7 +60,7 @@ class GdLoader {
             def smoke
             try {
                 smoke = pyEngine.eval(event['smoke'])
-            } catch (ScriptException ex) {
+            } catch (javax.script.ScriptException ex) {
                 println "cant' parse smoke output: ${event['smoke']}"
                 return
             }
