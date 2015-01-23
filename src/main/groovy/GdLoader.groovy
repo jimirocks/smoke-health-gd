@@ -42,12 +42,12 @@ class GdLoader {
 
     def addEvent(Map<String,String> event) {
         if (suitesCsv == null) {
-            suitesFile = File.createTempFile('suites', '.csv')
+            suitesFile = createTempCsv('suites')
             suitesCsv = createCsvPrinter(suitesFile)
             println "creating temp csv $suitesFile.absolutePath"
         }
         if (testsCsv == null) {
-            testsFile = File.createTempFile('tests', '.csv')
+            testsFile = createTempCsv('tests')
             testsCsv = createCsvPrinter(testsFile)
             println "creating temp csv $testsFile.absolutePath"
         }
@@ -84,6 +84,13 @@ class GdLoader {
         new CSVPrinter(new OutputStreamWriter(new FileOutputStream(file)), CSVFormat.DEFAULT.withQuoteMode(QuoteMode.ALL))
     }
 
+
+    private static File createTempCsv(String prefix) {
+        File file = File.createTempFile(prefix, '.csv')
+        file.deleteOnExit()
+        return file
+    }
+
     def loadToAds() {
         suitesCsv.close()
         testsCsv.close()
@@ -106,7 +113,7 @@ class GdLoader {
         suites.setMapping('status', 'label.suites.status')
         suites.setMapping('checkdate', 'checkdate.date.mdyy')
 
-        File suitesFile = File.createTempFile('suitesLoad', '.csv')
+        File suitesFile = createTempCsv('suitesLoad')
         def suitesLoadCsv = createCsvPrinter(suitesFile)
         suitesLoadCsv.printRecord('id', 'host', 'timestamp', 'status', 'checkdate')
         sql.eachRow("select host, checkdate as ts, status, to_char(checkdate, 'YYYY-MM-DD') as checkdate from suites") {
@@ -125,7 +132,7 @@ class GdLoader {
         healthchecks.setMapping('message', 'label.healthchecks.message')
         healthchecks.setMapping('dummy', 'fact.healthchecks.dummy')
 
-        File testsFile = File.createTempFile('testsLoad', '.csv')
+        File testsFile = createTempCsv('testsLoad')
         def testsLoadCsv = createCsvPrinter(testsFile)
         testsLoadCsv.printRecord('suiteid', 'test', 'severity', 'process', 'message', 'dummy')
         sql.eachRow("select host, checkdate as ts, test, severity, process, message, dummy from healthchecks") {
